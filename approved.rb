@@ -356,7 +356,7 @@ puts "====TESTING".color(:cyan)
 print "Acceptance tests"
 
 def acceptance_tests?
-  File.exist?(WORKING_DIR + 'spec/acceptance')
+  File.directory?(File.join(WORKING_DIR, 'spec/acceptance'))
 end
 
 if acceptance_tests?
