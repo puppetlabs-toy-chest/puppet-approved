@@ -57,7 +57,7 @@ puts "github uri: ".color(:blue) + repo
 puts "---------------------------#{"-" * repo_name.length}"
 puts ""
 
-README_SECTIONS = %w[Module\ Description Setup Usage Reference Limitations Development]
+README_SECTIONS = %w[Module\ description Setup Usage Reference Limitations Development]
 METADATA_FIELDS = %w[name version author summary license source project_page issues_url operatingsystem_support]
 
 manifest_glob = Dir.glob(WORKING_DIR + '/manifests/**/**')
