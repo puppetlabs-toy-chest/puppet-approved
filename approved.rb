@@ -40,12 +40,14 @@ end
 repo = ARGV[0]
 repo_name = repo.split("/").last.chomp(".git")
 repo_user = repo.split("/")[-2]
-tmpdir = Dir.mktmpdir
-WORKING_DIR = "#{tmpdir}/#{repo_name}"
+if File.directory?(repo)
+  WORKING_DIR = repo
+else
+  tmpdir = Dir.mktmpdir
+  WORKING_DIR = "#{tmpdir}/#{repo_name}"
 
-FileUtils.remove_entry_secure tmpdir
-
-Git.clone(repo, "#{tmpdir}/#{repo_name}")
+  Git.clone(repo, "#{tmpdir}/#{repo_name}")
+end
 
 puts ""
 puts "---------------------------#{"-" * repo_name.length}"
@@ -55,7 +57,7 @@ puts "github uri: ".color(:blue) + repo
 puts "---------------------------#{"-" * repo_name.length}"
 puts ""
 
-README_SECTIONS = %w[Module\ Description Setup Usage Reference Limitations Development]
+README_SECTIONS = %w[Module\ description Setup Usage Reference Limitations Development]
 METADATA_FIELDS = %w[name version author summary license source project_page issues_url operatingsystem_support]
 
 manifest_glob = Dir.glob(WORKING_DIR + '/manifests/**/**')
@@ -354,7 +356,7 @@ puts "====TESTING".color(:cyan)
 print "Acceptance tests"
 
 def acceptance_tests?
-  File.exist?(WORKING_DIR + 'spec/acceptance')
+  File.directory?(File.join(WORKING_DIR, 'spec/acceptance'))
 end
 
 if acceptance_tests?
@@ -376,7 +378,7 @@ else
   puts " #{xmark}"
 end
 
-FileUtils.rm_rf(WORKING_DIR)
+FileUtils.remove_entry_secure(tmpdir) if tmpdir
 
 # ## 9. Puppet Versions & Features
 # Though we like to move quickly with new Puppet features, Puppet Approved modules must be stable, reliable and ready for production use.  
