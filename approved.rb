@@ -191,7 +191,7 @@ def field_present?(field)
   if @metadata[field]
     puts " #{checkmark}"
   else
-    puts " missing!"
+    puts " #{xmark}"
   end
 end
 
@@ -330,7 +330,7 @@ puts "====SEMVER".color(:cyan)
 if @metadata['version'] =~ /\d.\d?\d.\d/
   puts "#{@metadata['version']} #{checkmark}"
 else
-  puts "nope!"
+  puts " #{xmark}"
 end
 
 # ## 8. Testing
