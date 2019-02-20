@@ -258,6 +258,14 @@ license_verified = false
 if @metadata['license'] == 'Apache-2.0' and @license
   license_verified = File.read("#{WORKING_DIR}/LICENSE").match /Apache/
   puts "License type verified #{checkmark}" if license_verified
+
+elsif @metadata['license'] == 'MIT' and @license
+  license_verified = File.read("#{WORKING_DIR}/LICENSE").match /MIT/
+  puts "License type verified #{checkmark}" if license_verified
+
+elsif  @metadata['license'] == 'BSD' and @license
+    license_verified = File.read("#{WORKING_DIR}/LICENSE").match /BSD/
+    puts "License type verified #{checkmark}" if license_verified
 end
 
 # ## 5. Originality
