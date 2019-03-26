@@ -104,25 +104,32 @@ end
 puts "====STYLE".color(:cyan)
 def puppet_lint
   manifest_glob = Dir.glob(WORKING_DIR + '/manifests/**/**')
-  pl = PuppetLint.new
-  PuppetLint.configuration.fail_on_warnings
-  PuppetLint.configuration.send('relative')
-  PuppetLint.configuration.send('disable_80chars')
-  PuppetLint.configuration.send('disable_class_inherits_from_params_class')
-  PuppetLint.configuration.send('disable_class_parameter_defaults')
-  PuppetLint.configuration.send('disable_documentation')
-  PuppetLint.configuration.send('disable_single_quote_string_with_variables')
-  PuppetLint.configuration.ignore_paths = ["spec//*.pp", "pkg//*.pp"]
-  manifest_glob.each do |manifest|
-    if manifest.include? ".pp"
-      pl.code = File.read(manifest)
-      pl.path = manifest
-      pl.run
+  unless manifest_glob.empty?
+    pl = PuppetLint.new
+    PuppetLint.configuration.fail_on_warnings
+    PuppetLint.configuration.send('relative')
+    PuppetLint.configuration.send('disable_80chars')
+    PuppetLint.configuration.send('disable_class_inherits_from_params_class')
+    PuppetLint.configuration.send('disable_class_parameter_defaults')
+    PuppetLint.configuration.send('disable_documentation')
+    PuppetLint.configuration.send('disable_single_quote_string_with_variables')
+    PuppetLint.configuration.send('disable_autoloader_layout')
+    PuppetLint.configuration.ignore_paths = ["spec//*.pp", "pkg//*.pp"]
+    manifest_glob.each do |manifest|
+      if manifest.include? ".pp"
+        pl.code = File.read(manifest)
+        pl.path = manifest
+        pl.run
+      end
+    end
+    print "There are no puppet-lint warnings"
+    if pl.problems.empty?
+      puts " #{checkmark}"
+    else
+      puts " #{xmark}"
+      pl.print_problems
     end
   end
-
-  pl.print_problems
-
 end
 
 puppet_lint
