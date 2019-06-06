@@ -128,7 +128,7 @@ def puppet_lint
   print "Manifests directory exists and manifests are puppet-lint error free?"
   if pl.errors?
     puts " #{xmark}"
-    print(" ⌙ Puppt lint problems found: ")
+    print(" ⌙ Puppet lint problems found: ")
     pl.print_problems
   else
     puts " #{checkmark}"
