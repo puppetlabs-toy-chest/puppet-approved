@@ -102,6 +102,11 @@ end
 #
 
 puts "====STYLE".color(:cyan)
+
+def manifest_directory?
+  File.directory?(File.join(WORKING_DIR, '/manifests'))
+end
+
 def puppet_lint
   manifest_glob = Dir.glob(WORKING_DIR + '/manifests/**/**')
   pl = PuppetLint.new
@@ -120,12 +125,22 @@ def puppet_lint
       pl.run
     end
   end
-
-  pl.print_problems
-
+  print "Manifests directory exists and manifests are puppet-lint error free?"
+  if pl.errors?
+    puts " #{xmark}"
+    print(" ⌙ Puppt lint problems found: ")
+    pl.print_problems
+  else
+    puts " #{checkmark}"
+  end
 end
 
-puppet_lint
+if manifest_directory?
+  puppet_lint
+else
+  print "Manifests directory does not exist (this is optional)"
+  puts " #{flowermark}"
+end
 
 # ## 2. Documentation
 # Almost more critical than the module itself, thorough and readable documentation is the best way to ensure your module is used successfully and contributed to by others. Cutting corners here will limit usage.
@@ -150,23 +165,28 @@ puppet_lint
 
 puts "====DOCUMENTATION".color(:cyan)
 print "README exists?"
-if File.exist? "#{WORKING_DIR}/README.md"
+if File.exist? "#{WORKING_DIR}/README.md" or File.exist? "#{WORKING_DIR}/README.markdown"
   puts " #{checkmark}"
-  @readme = File.read("#{WORKING_DIR}/README.md")
+  begin
+    @readme = File.read("#{WORKING_DIR}/README.md")
+  rescue
+    @readme = File.read("#{WORKING_DIR}/README.markdown")
+  end
 else
   puts " #{xmark}"
 end
 
 manifestparams = []
 
-manifest_glob.each do |manifest|
-  if manifest.include?(".pp")
-    lexed = PuppetLint::Lexer.new.tokenise(File.read(manifest))
-    params = PuppetLint::Data.param_tokens(lexed).select{ |token| token.next_token.next_token.value == "=" }.map{ |token| token.value } if PuppetLint::Data.param_tokens(lexed)
-    manifestparams.push(params).flatten!
+if manifest_directory?
+  manifest_glob.each do |manifest|
+    if manifest.include?(".pp")
+      lexed = PuppetLint::Lexer.new.tokenise(File.read(manifest))
+      params = PuppetLint::Data.param_tokens(lexed).select{ |token| token.next_token.next_token.value == "=" }.map{ |token| token.value } if PuppetLint::Data.param_tokens(lexed)
+      manifestparams.push(params).flatten!
+    end
   end
 end
-
 
 #docparams = @readme.split("\n").select { |line| line if line.include? "#####" }.map { |line| line.split("`")[1] }
 #
@@ -179,7 +199,7 @@ end
 
 def section_present?(section)
   print " ⌙ #{section}"
-  if @readme.include?("## #{section}")
+  if @readme.downcase.include?("## #{section.downcase}")
     puts " #{checkmark}"
   else
     puts " #{xmark}"
@@ -197,14 +217,15 @@ end
 
 
 print "Table of contents?"
+if @readme
+  if @readme.downcase.include?('#### Table of Contents'.downcase)
+    puts " #{checkmark}"
+  else
+    puts " #{xmark}"
+  end
 
-if @readme.include?('#### Table of Contents')
-  puts " #{checkmark}"
-else
-  puts " #{xmark}"
+  README_SECTIONS.each { |section| section_present?(section) }
 end
-
-README_SECTIONS.each { |section| section_present?(section) }
 
 # ## 3. Maintenance & Lifecycle
 #
@@ -239,6 +260,7 @@ puts "====MAINTENANCE & LIFECYCLE".color(:cyan)
 # ### Validation
 # The team at Puppet Labs will examine any available license file in the root of your module. They will also query the [Forge API](https://forgeapi.puppetlabs.com/) for the modules [license metadata](https://docs.puppetlabs.com/puppet/latest/reference/modules_publishing.html#fields-in-metadatajson).
 #
+puts "*CHECKS NOT CURRENTLY IMPLEMENTED*".color(:yellow)
 
 puts "====LICENSE".color(:cyan)
 print "LICENSE exists?"
@@ -249,25 +271,28 @@ else
   puts " #{xmark}"
 end
 
-@metadata = JSON.parse(File.read("#{WORKING_DIR}/metadata.json")) if File.exist? "#{WORKING_DIR}/metadata.json"
+if File.exist? "#{WORKING_DIR}/metadata.json"
+  @metadata = JSON.parse(File.read("#{WORKING_DIR}/metadata.json")) 
 
-puts "License type: #{@metadata['license']}"
+  puts "License type: #{@metadata['license']}"
 
-license_verified = false
+  license_verified = false
 
-if @metadata['license'] == 'Apache-2.0' and @license
-  license_verified = File.read("#{WORKING_DIR}/LICENSE").match /Apache/
-  puts "License type verified #{checkmark}" if license_verified
+  if @metadata['license'] == 'Apache-2.0' and @license
+    license_verified = File.read("#{WORKING_DIR}/LICENSE").match /Apache/
+    puts "License type verified #{checkmark}" if license_verified
 
-elsif @metadata['license'] == 'MIT' and @license
-  license_verified = File.read("#{WORKING_DIR}/LICENSE").match /MIT/
-  puts "License type verified #{checkmark}" if license_verified
+  elsif @metadata['license'] == 'MIT' and @license
+    license_verified = File.read("#{WORKING_DIR}/LICENSE").match /MIT/
+    puts "License type verified #{checkmark}" if license_verified
 
-elsif  @metadata['license'] == 'BSD' and @license
+  elsif  @metadata['license'] == 'BSD' and @license
     license_verified = File.read("#{WORKING_DIR}/LICENSE").match /BSD/
     puts "License type verified #{checkmark}" if license_verified
+  else
+    puts "License type not verified #{flowermark}"
+  end
 end
-
 # ## 5. Originality
 #
 # Puppet Approved modules are intended to make it simple to find a great module to solve a given automation task. Limiting the number of available choices for a given technology helps simplify the process.
@@ -305,6 +330,8 @@ puts "====ORIGINALITY".color(:cyan)
 # Example: curl 'https://forgeapi.puppetlabs.com/v3/modules/puppetlabs-ntp'
 #
 #
+
+puts "*CHECKS NOT CURRENTLY IMPLEMENTED*".color(:yellow)
 
 puts "====METADATA".color(:cyan)
 print "metadata.json exists?"
@@ -406,3 +433,5 @@ FileUtils.remove_entry_secure(tmpdir) if tmpdir
 # - `puppet config print parser` will return `current` or `future`.
 
 puts "====PUPPET VERSIONS & FEATURES".color(:cyan)
+
+puts "*CHECKS NOT CURRENTLY IMPLEMENTED*".color(:yellow)
