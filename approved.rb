@@ -368,6 +368,13 @@ else
   puts " #{xmark}"
 end
 
+if @metadata['version'][0].to_i >= 1
+  result =  checkmark
+else
+  result = xmark
+end
+  puts "Semver is greater than 1.0.0 #{result}"
+
 # ## 8. Testing
 #
 # ### Requirements
