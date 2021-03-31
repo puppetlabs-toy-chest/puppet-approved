@@ -235,7 +235,7 @@ end
 # Puppet Approved modules **should** be regularly maintained and have received updates in the last 6 months, where applicable. Modules **should not** have more than 1 month gap between Forge and VCS. They **should** be contributed to by more than one person or organization.
 #
 # ### Resources
-# Include a contributing guide with your module to provide would-be contributors with some guidelines. See [puppetlabs-ntp](https://github.com/puppetlabs/puppetlabs-ntp/blob/master/CONTRIBUTING.md) for an example.
+# Include a contributing guide with your module to provide would-be contributors with some guidelines. See [puppetlabs-ntp](https://github.com/puppetlabs/puppetlabs-ntp/blob/main/CONTRIBUTING.md) for an example.
 #
 # Publish to Forge quickly and easily with these tools.
 # - [puppet blacksmith]() cli publisher
