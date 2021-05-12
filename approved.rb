@@ -337,43 +337,43 @@ puts "====METADATA".color(:cyan)
 print "metadata.json exists?"
 if File.exist? "#{WORKING_DIR}/metadata.json"
   puts " #{checkmark}"
-else
-  puts " #{xmark}"
-end
 
-METADATA_FIELDS.each { |field| field_present?(field) }
+  METADATA_FIELDS.each { |field| field_present?(field) }
 
-if @metadata['requirements'][0]['name'] == 'puppet'
-  puts " ⌙ puppet requirement #{checkmark}"
-end
+  if @metadata['requirements'][0]['name'] == 'puppet'
+    puts " ⌙ puppet requirement #{checkmark}"
+  end
 
-# ## 7. SemVer
-# Versioning your module according to SemVer rules sets expectations for users upgrading their version of your module, keeping things predictable and consistent.
-#
-# ### Requirements
-# Puppet Approved modules **must** be versioned according to SemVer v1 rules. Candidate releases must be >=1.x.
-#
-# ### Resources
-# You can learn more about SemVer v1 [at its website](http://semver.org/spec/v1.0.0.html).
-#
-# ### Validation
-# We evaluate a modules version against SemVer v1 rules and expect a version greater or equal to 1.0.0 to review for Puppet Approved.
-#
-#
+  # ## 7. SemVer
+  # Versioning your module according to SemVer rules sets expectations for users upgrading their version of your module, keeping things predictable and consistent.
+  #
+  # ### Requirements
+  # Puppet Approved modules **must** be versioned according to SemVer v1 rules. Candidate releases must be >=1.x.
+  #
+  # ### Resources
+  # You can learn more about SemVer v1 [at its website](http://semver.org/spec/v1.0.0.html).
+  #
+  # ### Validation
+  # We evaluate a modules version against SemVer v1 rules and expect a version greater or equal to 1.0.0 to review for Puppet Approved.
+  #
+  #
 
-puts "====SEMVER".color(:cyan)
-if @metadata['version'] =~ /\d.\d?\d.\d/
-  puts "#{@metadata['version']} #{checkmark}"
-else
-  puts " #{xmark}"
-end
+  puts "====SEMVER".color(:cyan)
+  if @metadata['version'] =~ /\d.\d?\d.\d/
+    puts "#{@metadata['version']} #{checkmark}"
+  else
+    puts " #{xmark}"
+  end
 
-if @metadata['version'][0].to_i >= 1
-  result =  checkmark
-else
-  result = xmark
-end
+  if @metadata['version'][0].to_i >= 1
+    result =  checkmark
+  else
+    result = xmark
+  end
   puts "Semver is greater than 1.0.0 #{result}"
+else
+  puts " #{xmark}"
+end
 
 # ## 8. Testing
 #
