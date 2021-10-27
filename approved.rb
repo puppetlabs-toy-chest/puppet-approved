@@ -111,7 +111,7 @@ def puppet_lint
   manifest_glob = Dir.glob(WORKING_DIR + '/manifests/**/**')
   pl = PuppetLint.new
   PuppetLint.configuration.fail_on_warnings
-  PuppetLint.configuration.send('relative')
+  PuppetLint.configuration.relative = true
   PuppetLint.configuration.send('disable_80chars')
   PuppetLint.configuration.send('disable_class_inherits_from_params_class')
   PuppetLint.configuration.send('disable_class_parameter_defaults')
